@@ -1,0 +1,7 @@
+{
+  "env": {
+    "development": {
+      "presets": ["es2016", "stage-2", "react", "react-hmre"]
+    }
+  }
+}
