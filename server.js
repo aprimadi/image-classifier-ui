@@ -1,8 +1,10 @@
 const Hapi = require('hapi')
 const Vision = require('vision')
 const Path = require('path')
+const _ = require('lodash')
 
 const ImageWalker = require("./models/ImageWalker")
+const sequelize = require("./models")
 
 // Create a server with a host and port
 const server = Hapi.server({
@@ -14,8 +16,14 @@ const server = Hapi.server({
 server.route({
   method: 'GET',
   path: '/',
-  handler: function(request, reply) {
-    return reply.view('index')
+  handler: async function(request, reply) {
+    let lastImageId = 0
+    let result = await sequelize.query("SELECT MAX(image_id) FROM images", {
+      type: sequelize.QueryTypes.SELECT,
+      raw: true,
+    })
+    lastImageId = _.values(result[0])[0] || 0
+    return reply.view('index', { lastImageId: lastImageId })
   }
 })
 
@@ -37,7 +45,12 @@ server.route({
   method: 'POST',
   path: '/images/update',
   handler: function(request, reply) {
-    // TODO
+    let imageId = request.payload['image_id']
+    let rotation = request.payload['rotation']
+    sequelize.query(`INSERT INTO images(image_id, rotation) VALUES (${imageId}, ${rotation}) ON DUPLICATE KEY UPDATE rotation=${rotation}`)
+    const response = reply.response({})
+    response.type('application/json')
+    return response
   }
 })
 
