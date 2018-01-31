@@ -12,7 +12,7 @@ module.exports = {
   output: {
     filename: 'main.js',
     path: path.resolve(__dirname, 'static/js'),
-    publicPath: 'http://localhost:8080',
+    publicPath: 'http://localhost:8080/',
   },
   module: {
     rules: [

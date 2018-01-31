@@ -12,7 +12,7 @@ function base64encode(file) {
   return new Buffer(bitmap).toString('base64');
 }
 
-export default class ImageWalker {
+class ImageWalker {
   constructor(dir) {
     this.dir = dir
   }
@@ -48,3 +48,5 @@ export default class ImageWalker {
     return result
   }
 }
+
+module.exports = ImageWalker

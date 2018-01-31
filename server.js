@@ -2,6 +2,8 @@ const Hapi = require('hapi')
 const Vision = require('vision')
 const Path = require('path')
 
+const ImageWalker = require("./models/ImageWalker")
+
 // Create a server with a host and port
 const server = Hapi.server({
   host: 'localhost',
@@ -18,8 +20,22 @@ server.route({
 })
 
 server.route({
+  method: 'GET',
+  path: '/images',
+  handler: function(request, reply) {
+    let lastImageId = request.query['last_image_id'] || 0
+    let limit = request.query['limit'] || 20
+    let walker = new ImageWalker(Path.join(__dirname, "data"))
+    let result = walker.walk(lastImageId, limit)
+    const response = reply.response(result)
+    response.type('application/json')
+    return response
+  }
+})
+
+server.route({
   method: 'POST',
-  path: '/image_update',
+  path: '/images/update',
   handler: function(request, reply) {
     // TODO
   }
