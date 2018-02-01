@@ -17,24 +17,34 @@ server.route({
   method: 'GET',
   path: '/',
   handler: async function(request, reply) {
-    let lastImageId = 0
     let result = await sequelize.query("SELECT MAX(image_id) FROM images", {
       type: sequelize.QueryTypes.SELECT,
       raw: true,
     })
-    lastImageId = _.values(result[0])[0] || 0
-    return reply.view('index', { lastImageId: lastImageId })
+    let lastImageId = _.values(result[0])[0] || 0
+    if (request.query['last_image_id']) {
+      lastImageId = parseInt(request.query['last_image_id'])
+    }
+    let skipExist = request.query['skip_exist'] || 'false'
+    let limit = request.query['limit'] || 100
+    return reply.view('index', {
+      lastImageId: lastImageId,
+      skipExist: skipExist,
+      limit: limit,
+    })
   }
 })
 
 server.route({
   method: 'GET',
   path: '/images',
-  handler: function(request, reply) {
+  handler: async function(request, reply) {
     let lastImageId = request.query['last_image_id'] || 0
-    let limit = request.query['limit'] || 20
+    let limit = request.query['limit'] || 100
+    let skipExist = request.query['skip_exist']
     let walker = new ImageWalker(Path.join(__dirname, "data"))
-    let result = walker.walk(lastImageId, limit)
+    console.log('lastImageId:', lastImageId)
+    let result = await walker.walk(lastImageId, limit, skipExist)
     const response = reply.response(result)
     response.type('application/json')
     return response

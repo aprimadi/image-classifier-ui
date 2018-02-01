@@ -1,4 +1,7 @@
 const fs = require('fs')
+const _ = require('lodash')
+
+const sequelize = require(".")
 
 function pad(n) {
   let z = '0'
@@ -23,12 +26,23 @@ class ImageWalker {
   //   { base64: ..., imageId: 3 },
   // ]
   //
-  walk(lastImageId, limit) {
+  async walk(lastImageId, limit, skipExist) {
     let result = []
     let count = 0
     let imageId = lastImageId || 0
     while (count < limit && imageId < 842000) {
       imageId++
+
+      if (skipExist) {
+        let result = await sequelize.query(`SELECT image_id FROM images WHERE image_id = ${imageId}`, {
+          type: sequelize.QueryTypes.SELECT,
+          raw: true
+        })
+        if (_.values(result[0])[0]) {
+          continue
+        }
+      }
+
       let _id = imageId
       let mil = pad(Math.floor(_id / 1000000))
       _id = _id % 1000000

@@ -13,6 +13,8 @@ type Image = {
 
 type Props = {
   lastImageId: number,
+  skipExist: boolean,
+  limit: number,
 }
 
 type State = {
@@ -35,8 +37,16 @@ export default class ClassifyImagePanel extends Component<Props, State> {
   }
 
   fetchNextPage() {
+    let { skipExist, limit } = this.props
     let { lastImageId } = this.state
-    $.get(`/images?last_image_id=${lastImageId}`).done((data) => {
+    let url = `/images?last_image_id=${lastImageId}`
+    if (skipExist) {
+      url = `${url}&skip_exist=y`
+    }
+    if (limit) {
+      url = `${url}&limit=${limit}`
+    }
+    $.get(url).done((data) => {
       this.setState({
         images: data,
         lastImageId: data[data.length - 1].imageId,
@@ -97,7 +107,7 @@ export default class ClassifyImagePanel extends Component<Props, State> {
         "rotate270": image.rotation == 90,
       })
       _images.push(
-        <div className="image-list-item">
+        <div className="image-list-item" data-image-id={image.imageId}>
           <img src={`data:image/png;base64,${image.base64}`}></img>
           <img className={imgClassName} src={`data:image/png;base64,${image.base64}`}></img>
           <div className="pull-right">

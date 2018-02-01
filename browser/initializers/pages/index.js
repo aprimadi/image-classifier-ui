@@ -7,7 +7,11 @@ export default function() {
   let el = document.getElementById('classify-image-panel')
   if (el) {
     ReactDOM.render(
-      <ClassifyImagePanel lastImageId={window.data.lastImageId} />,
+      <ClassifyImagePanel
+        lastImageId={window.data.lastImageId}
+        skipExist={window.data.skipExist}
+        limit={window.data.limit}
+      />,
       el
     )
   }

@@ -4,10 +4,10 @@ const sequelize = new Sequelize(config.db.database, config.db.username, config.d
   host: config.db.host,
   dialect: 'mysql',
   pool: {
-    max: 20,
-    min: 0,
-    acquire: 30000,
-    idle: 10000
+    max: 300,
+    min: 100,
+    acquire: 60000,
+    idle: 30000
   },
 })
 
