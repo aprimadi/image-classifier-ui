@@ -9,6 +9,7 @@
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-tap-event-plugin": "^3.0.2",
+    "remove": "^0.1.5",
     "sequelize": "^4.32.2",
     "vision": "^5.3.1"
   },
